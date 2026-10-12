@@ -37,9 +37,10 @@ export async function POST(req: Request) {
     return Response.json({ error: "Bad request" }, { status: 400 });
   }
 
-  const fallback = () => Response.json({ text: templateDraft(lead, rules), source: "template" });
+  const fallback = (why: string) => Response.json({ text: templateDraft(lead, rules), source: "template", why });
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "local";
-  if (!KEY || !allowed(ip)) return fallback();
+  if (!KEY) return fallback("no-key");
+  if (!allowed(ip)) return fallback("rate-limited");
 
   try {
     const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
@@ -52,7 +53,8 @@ export async function POST(req: Request) {
       },
       body: JSON.stringify({
         model: MODEL,
-        max_tokens: 400,
+        max_tokens: 1500,
+        reasoning: { exclude: true }, // reasoning models (e.g. Nemotron) otherwise spend the budget thinking
         messages: [
           { role: "system", content: SYSTEM },
           {
@@ -62,14 +64,14 @@ Internal note (context only, never quote it): ${String(lead.lastNote).slice(0, 6
           },
         ],
       }),
-      signal: AbortSignal.timeout(20_000),
+      signal: AbortSignal.timeout(45_000),
     });
-    if (!res.ok) throw new Error(`OpenRouter ${res.status}`);
+    if (!res.ok) throw new Error(`openrouter-${res.status}`);
     const data = await res.json();
     const text = String(data?.choices?.[0]?.message?.content ?? "").trim();
-    return text ? Response.json({ text, source: "ai", model: MODEL }) : fallback();
+    return text ? Response.json({ text, source: "ai", model: MODEL }) : fallback("empty-reply");
   } catch (err) {
     console.error("draft failed", err);
-    return fallback();
+    return fallback(err instanceof Error ? err.message.slice(0, 40) : "error");
   }
 }

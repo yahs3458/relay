@@ -15,8 +15,8 @@ export async function POST(req: Request) {
     return Response.json({ error: "Bad request" }, { status: 400 });
   }
 
-  const local = () => Response.json({ text: localAnswer(q, leads), source: "rules" });
-  if (!KEY) return local();
+  const local = (why: string) => Response.json({ text: localAnswer(q, leads), source: "rules", why });
+  if (!KEY) return local("no-key");
 
   const table = leads
     .map((l) => `- ${l.name} | ${l.company} | $${l.value} | ${l.status} | ${l.daysSinceContact}d since contact | score ${scoreLead(l)} | note: ${String(l.lastNote).slice(0, 160)}`)
@@ -28,19 +28,20 @@ export async function POST(req: Request) {
       headers: { Authorization: `Bearer ${KEY}`, "Content-Type": "application/json", "HTTP-Referer": "https://www.yashtechstudio.com", "X-Title": "Relay demo" },
       body: JSON.stringify({
         model: MODEL,
-        max_tokens: 300,
+        max_tokens: 1500,
+        reasoning: { exclude: true }, // reasoning models (e.g. Nemotron) otherwise spend the budget thinking
         messages: [
           { role: "system", content: "You are Relay, a CRM assistant. Answer in 1-3 short sentences using ONLY the pipeline data given. If the data doesn't say, say so. No markdown." },
           { role: "user", content: `Pipeline:\n${table}\n\nQuestion: ${q}` },
         ],
       }),
-      signal: AbortSignal.timeout(20_000),
+      signal: AbortSignal.timeout(45_000),
     });
-    if (!res.ok) throw new Error(`OpenRouter ${res.status}`);
+    if (!res.ok) throw new Error(`openrouter-${res.status}`);
     const text = String((await res.json())?.choices?.[0]?.message?.content ?? "").trim();
-    return text ? Response.json({ text, source: "ai" }) : local();
+    return text ? Response.json({ text, source: "ai" }) : local("empty-reply");
   } catch (err) {
     console.error("ask failed", err);
-    return local();
+    return local(err instanceof Error ? err.message.slice(0, 40) : "error");
   }
 }
