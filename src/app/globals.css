@@ -1,26 +1,30 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
+/* Relay: a dark workspace with one electric accent for the agent. */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-ink: oklch(15% 0.02 275);
+  --color-panel: oklch(19% 0.022 275);
+  --color-line: oklch(28% 0.025 275);
+  --color-text: oklch(94% 0.01 275);
+  --color-dim: oklch(68% 0.02 275);
+  --color-brand: oklch(74% 0.17 300);
+  --color-ok: oklch(76% 0.15 155);
+  --color-warn: oklch(80% 0.14 75);
+  --color-sky: oklch(78% 0.11 230);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  color-scheme: dark;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-ink);
+  color: var(--color-text);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
 }
