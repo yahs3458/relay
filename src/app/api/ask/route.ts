@@ -29,7 +29,7 @@ export async function POST(req: Request) {
       body: JSON.stringify({
         model: MODEL,
         max_tokens: 1500,
-        reasoning: { exclude: true }, // reasoning models (e.g. Nemotron) otherwise spend the budget thinking
+        reasoning: { enabled: false }, // reasoning models (e.g. Nemotron) otherwise spend the whole budget thinking
         messages: [
           { role: "system", content: "You are Relay, a CRM assistant. Answer in 1-3 short sentences using ONLY the pipeline data given. If the data doesn't say, say so. No markdown." },
           { role: "user", content: `Pipeline:\n${table}\n\nQuestion: ${q}` },

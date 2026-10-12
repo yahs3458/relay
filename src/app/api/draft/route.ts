@@ -54,7 +54,7 @@ export async function POST(req: Request) {
       body: JSON.stringify({
         model: MODEL,
         max_tokens: 1500,
-        reasoning: { exclude: true }, // reasoning models (e.g. Nemotron) otherwise spend the budget thinking
+        reasoning: { enabled: false }, // reasoning models (e.g. Nemotron) otherwise spend the whole budget thinking
         messages: [
           { role: "system", content: SYSTEM },
           {
@@ -68,7 +68,7 @@ Internal note (context only, never quote it): ${String(lead.lastNote).slice(0, 6
     });
     if (!res.ok) throw new Error(`openrouter-${res.status}`);
     const data = await res.json();
-    const text = String(data?.choices?.[0]?.message?.content ?? "").trim();
+    const text = String(data?.choices?.[0]?.message?.content ?? "").replace(/^subject:.*\n+/i, "").trim();
     return text ? Response.json({ text, source: "ai", model: MODEL }) : fallback("empty-reply");
   } catch (err) {
     console.error("draft failed", err);
