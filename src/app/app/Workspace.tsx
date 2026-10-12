@@ -227,7 +227,7 @@ export default function Workspace() {
             <button type="button" onClick={reset} className="text-brand hover:underline">Reset</button>
           </p>
           <a href="https://www.yashtechstudio.com" target="_blank" rel="noopener noreferrer" className="mt-4 block hover:text-text">
-            Built by <span className="font-semibold text-text">Yash Techstudio</span> ↗
+            Built by <span className="font-semibold text-text">Yashh Techstudio</span> ↗
           </a>
         </div>
       </aside>

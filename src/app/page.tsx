@@ -59,7 +59,7 @@ export default function Landing() {
 
       <footer className="border-t border-line py-8 text-center text-xs text-dim">
         Relay is a concept product designed and built by{" "}
-        <a href="https://www.yashtechstudio.com" className="text-text hover:text-brand">Yash Techstudio</a> — we build AI agents and SaaS like this for real businesses.
+        <a href="https://www.yashtechstudio.com" className="text-text hover:text-brand">Yashh Techstudio</a> — we build AI agents and SaaS like this for real businesses.
       </footer>
     </div>
   );

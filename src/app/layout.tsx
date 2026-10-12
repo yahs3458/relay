@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 const description =
-  "Relay is a concept CRM with an AI follow-up agent built in: it finds leads that went quiet, drafts the right message, and waits for your approval. Built by Yash Techstudio.";
+  "Relay is a concept CRM with an AI follow-up agent built in: it finds leads that went quiet, drafts the right message, and waits for your approval. Built by Yashh Techstudio.";
 
 export const metadata: Metadata = {
   title: "Relay — the CRM where an AI agent does your follow-ups",
